@@ -2,6 +2,7 @@
 The MIT License (MIT)
 
 Copyright (c) 2014 Samuel Neff
+Copyright (c) 2020 Robert McLeod
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -727,6 +728,18 @@ foreach ($extension in $extensions) {
 }
 
 function Get-MimeType {
+    <#
+    .SYNOPSIS
+        Returns the MimeType for the given extension
+    .DESCRIPTION
+        Returns the MimeType for the given extension
+    .EXAMPLE
+        PS C:\> Get-MimeType -Extension 'txt'
+        Gets the MIME type for the .txt extension
+    .EXAMPLE
+        PS C:\> 'txt' | Get-MimeType
+        Gets the MIME type for the .txt extension using pipelined input
+    #>
     param (
         # The extension to get a Mime Type for.
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -735,18 +748,32 @@ function Get-MimeType {
         $Extension
     )
 
-    if (-not $Extension.StartsWith('.')) {
-        $Extension = ".$Extension"
-    }
+    process {
+        if (-not $Extension.StartsWith('.')) {
+            $Extension = ".$Extension"
+        }
 
-    if ($MimeTypeMap.ContainsKey($Extension)) {
-        $MimeTypeMap[$Extension]
-    } else {
-        'application/octet-stream'
+        if ($MimeTypeMap.ContainsKey($Extension)) {
+            $MimeTypeMap[$Extension]
+        } else {
+            'application/octet-stream'
+        }
     }
 }
 
 function Get-Extension {
+    <#
+    .SYNOPSIS
+        Returns the default extension for a given MIME type
+    .DESCRIPTION
+        Returns the default extension for a given MIME type
+    .EXAMPLE
+        PS C:\> Get-Extension -MimeType 'audio/wav'
+        Gets the default extension for the MIME type audio/wav
+    .EXAMPLE
+        PS C:\> 'audio/wav' | Get-Extension
+        Gets the default extension for the MIME type audio/wav using pipeline input
+    #>
     param (
         # The Mime Type to get an extension for.
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -760,14 +787,15 @@ function Get-Extension {
         $ThrowIfNotFound
     )
 
-    if ($MimeTypeMap.ContainsKey($MimeType)) {
-        $MimeTypeMap[$MimeType]
-    } elseif ($ThrowIfNotFound) {
-        throw [System.ArgumentException]::new("Requested mime type is not registered: $MimeType")
-    } else {
-        $null
+    process {
+        if ($MimeTypeMap.ContainsKey($MimeType)) {
+            $MimeTypeMap[$MimeType]
+        } elseif ($ThrowIfNotFound) {
+            throw [System.ArgumentException]::new("Requested mime type is not registered: $MimeType")
+        } else {
+            $null
+        }
     }
-
 }
 
 Export-ModuleMember -Variable 'MimeTypeMap'
