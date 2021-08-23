@@ -60,3 +60,4 @@ Pass in a mime type and get an extension back.
 
 If the mime type is not registered, `$null` is returned.
 Optionally provide the `-ThrowIfNotFound` switch to throw an error for unregistered mime types.
+

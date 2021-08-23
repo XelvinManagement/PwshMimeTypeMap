@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, macos-11, windows-2019 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup module cache
+        id: cacher
+        uses: actions/cache@v2
+        with:
+          path: "~/.local/share/powershell/Modules"
+          key: ${{ runner.os }}-SqlServer-PSScriptAnalyzer
+      - name: Install PSScriptAnalyzer
+        if: steps.cacher.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Confirm:$false -ErrorAction Stop
+
+      - name: Pester - Pwsh
+        shell: pwsh
+        run: |
+          $pester = Import-Module -Name 'Pester' -PassThru
+          $analyzer = Import-Module -Name 'PSScriptAnalyzer' -Passthru
+          [PSCustomObject]@{
+            PSVersion = $PSVersionTable.PSVersion
+            Pester = $pester.Version
+            PSScriptAnalyzer = $analyzer.Version
+          } | Format-List | Out-String
+          $config = [PesterConfiguration]::Default
+          $config.TestResult.Enabled = $true
+          $config.Run.Exit = $true
+          $config.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $config
+
+      - name: Pester - Powershell
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $pester = Import-Module -Name 'Pester' -PassThru
+          $analyzer = Import-Module -Name 'PSScriptAnalyzer' -Passthru
+          [PSCustomObject]@{
+            PSVersion = $PSVersionTable.PSVersion
+            Pester = $pester.Version
+            PSScriptAnalyzer = $analyzer.Version
+          } | Format-List | Out-String
+          $config = [PesterConfiguration]::Default
+          $config.TestResult.Enabled = $true
+          $config.Run.Exit = $true
+          $config.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $config

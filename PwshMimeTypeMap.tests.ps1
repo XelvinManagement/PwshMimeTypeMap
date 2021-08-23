@@ -59,7 +59,7 @@ Describe 'MimeTypeMap' {
         $MimeTypeMap[$Ext] | Should -Be $Mime
     }
 
-    It "'<Ext>' => '<Mime>'" -TestCases $testCases {
+    It "'<Mime>' => '<Ext>'" -TestCases $testCases {
         param ($Ext, $Mime)
 
         $MimeTypeMap[$Mime] | Should -Be $Ext
@@ -67,7 +67,11 @@ Describe 'MimeTypeMap' {
 }
 
 Describe 'PwshMimeType' {
-    It 'PSScirptAnalyzer' {
+    It 'PSScirptAnalyzer pms1' {
         Invoke-ScriptAnalyzer -Path *.psm1 | Should -BeNullOrEmpty
+    }
+
+    It 'PSScirptAnalyzer ps1' {
+        Invoke-ScriptAnalyzer -Path *.ps1 | Should -BeNullOrEmpty
     }
 }

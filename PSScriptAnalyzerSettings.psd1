@@ -42,7 +42,7 @@
         PSUseConsistentWhitespace = @{
             Enable          = $true
             CheckInnerBrace = $true
-            CheckOpenBrace  = $false # incorrectly flags all `Should -Throw` Pester assertions
+            CheckOpenBrace  = $true # incorrectly flags all `Should -Throw` Pester assertions
             CheckOpenParen  = $true
             CheckOperator   = $false # conflicts with `PSAlignAssignmentStatement`
             CheckPipe       = $true
@@ -65,5 +65,4 @@
         'Warning'
         'Information'
     )
-
 }
