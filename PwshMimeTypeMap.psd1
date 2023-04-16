@@ -32,7 +32,7 @@
     # Description = ''
 
     # Minimum version of the PowerShell engine required by this module
-    PowerShellVersion = '3'
+    # PowerShellVersion = '3'
 
     # Name of the PowerShell host required by this module
     # PowerShellHostName = ''
